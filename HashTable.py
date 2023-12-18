@@ -3,48 +3,47 @@ class HashTable:
 
     # Initialize the Hash Table
     def __init__(self, size=40):
-        self.map = [None] * size
+        self.list = [None] * size
 
     # Hash function to determine the index of the package
     def _get_hash(self, key):
         hash = 0
+
+        # Generate a hash value based on the key
         for char in str(key):
             hash += ord(char)
-        return hash % len(self.map)
+        return hash % len(self.list)
 
     # Add a package to the hash table
     def insert(self, key, value):
-        hash = self._get_hash(key)
-        keyValue = [key, value]
 
-        if self.map[hash] is None:
-            self.map[hash] = list([keyValue])
+        # Get the hash index
+        hash = self._get_hash(key)
+        keyValuePair = [key, value]
+
+        # If the index is empty, add the package
+        if self.list[hash] is None:
+            self.list[hash] = list([keyValuePair])
             return True
+
+        # If the index is not empty, check if the package is already in the index
         else:
-            for pair in self.map[hash]:
+            for pair in self.list[hash]:
                 if pair[0] == key:
                     pair[1] = value
                     return True
-            self.map[hash].append(keyValue)
+
+            # If the package is not in the index, add the package to the list
+            self.list[hash].append(keyValuePair)
             return True
 
     # Get a package from the hash table
-    def get(self, key):
+    def lookup(self, key):
         hash = self._get_hash(key)
-        if self.map[hash] is not None:
-            for keyValuePair in self.map[hash]:
+        if self.list[hash] is not None:
+
+            # iterate through the list to find the package
+            for keyValuePair in self.list[hash]:
                 if keyValuePair[0] == key:
                     return keyValuePair[1]
         return None
-
-    # Delete a package from the hash table
-    def delete(self, key):
-        hash = self._get_hash(key)
-
-        if self.map[hash] is None:
-            return False
-        for i in range(0, len(self.map[hash])):
-            if self.map[hash][i][0] == key:
-                self.map[hash].pop(i)
-                return True
-
