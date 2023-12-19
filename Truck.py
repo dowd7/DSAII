@@ -1,7 +1,6 @@
 class Truck:
     def __init__(self, capacity=16):
         self.capacity = capacity
-        self.packages = []
         self.mileage = 0
         self.time = 0
         self.currentLocation = "HUB"
