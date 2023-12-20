@@ -5,5 +5,4 @@ class Truck:
         self.time = 0
         self.currentLocation = "4001 South 700 East"
         self.currentPackage = None
-        self.packagesDelivered = []
         self.packagesNotDelivered = []

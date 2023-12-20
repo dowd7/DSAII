@@ -7,8 +7,8 @@ class Package:
         self.zip = zip
         self.deadline = deadline
         self.weight = weight
-        self.status = status
+        self.status = "En Route"
         self.deliveryTime = None
 
     def __str__(self):
-        return "%s, %s, %s, %s, %s, %s, %s, %s, %s" % (self.ID, self.address, self.city, self.state, self.zip, self.deadline, self.weight, self.status, self.deliveryTime)
+        return "%s, %s, %s, %s, %s, %s, %s, %s" % (self.ID, self.address, self.city, self.state, self.zip, self.deadline, self.weight, self.status)
