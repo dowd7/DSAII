@@ -6,6 +6,7 @@ import HashTable
 import Package
 import csv
 import Truck
+import datetime
 
 h = HashTable.HashTable()
 
@@ -66,15 +67,67 @@ for i in packages3:
     truck3.packagesNotDelivered.append(h.lookup(str(i)))
 
 
+def deliverPackages(truck):
+    while len(truck.packagesNotDelivered) > 0:
+        # Get the closest package
+        closestPackage = truck.packagesNotDelivered[0]
+        closestPackageIndex = 0
+        closestDistance = 1000
+
+        # Iterate through the packages to find the closest one
+        for i in range(0, len(truck.packagesNotDelivered)):
+            package = truck.packagesNotDelivered[i]
+            addressIndex = getAddressIndex(package.address)
+
+            # Get the distance between the current package and the truck's current location
+            distance = calculateDistance(getAddressIndex(truck.currentLocation), addressIndex)
+
+            # If the distance is less than the closest distance, update the closest package
+            if float(distance) < float(closestDistance):
+                closestPackage = package
+                closestPackageIndex = i
+                closestDistance = distance
+
+        # Set the truck's current location to the closest package's address
+        truck.currentLocation = closestPackage.address
+
+        # Set the truck's current package to the closest package
+        truck.currentPackage = closestPackage
+
+        # Set the truck's mileage to the distance between the truck's current location and the closest package
+        truck.mileage += float(closestDistance)
+
+        # Set the truck's time to the distance between the truck's current location and the closest package
+        truck.time += datetime.timedelta(hours=float(closestDistance) / 18)
+
+        # Set the package's delivery time to the truck's time
+        closestPackage.deliveryTime = truck.time
+
+        # Add the package to the truck's delivered list and set the package's status to delivered
+        truck.packagesDelivered.append(closestPackage)
+        closestPackage.status = "Delivered"
+
+        # Remove the package from the truck's not delivered list
+        truck.packagesNotDelivered.pop(closestPackageIndex)
+
+
 # Deliver the packages
-# deliverPackages(truck1)
-# deliverPackages(truck2)
-# deliverPackages(truck3)
+truck1.time = datetime.timedelta(hours=8, minutes=30)
+truck2.time = datetime.timedelta(hours=8, minutes=30)
+
+deliverPackages(truck1)
+deliverPackages(truck2)
+
+truck3.time = min(truck1.time, truck2.time)
+deliverPackages(truck3)
 
 
 # loop 1-40 to print the package information
-# for i in range(1, 41):
-#     print(h.lookup(str(i)))
+for i in range(1, 41):
+    print(h.lookup(str(i)))
 
 
 print(calculateDistance(0,2))
+print(truck1.time)
+print(truck1.mileage + truck2.mileage + truck3.mileage)
+print(truck3.time)

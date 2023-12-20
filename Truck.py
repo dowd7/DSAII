@@ -3,7 +3,7 @@ class Truck:
         self.capacity = capacity
         self.mileage = 0
         self.time = 0
-        self.currentLocation = "HUB"
+        self.currentLocation = "4001 South 700 East"
         self.currentPackage = None
         self.packagesDelivered = []
         self.packagesNotDelivered = []
