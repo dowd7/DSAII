@@ -48,13 +48,13 @@ def calculateDistance(addressIndex1, addressIndex2):
 # Manually load the trucks
 packages1 = [1, 13, 14, 15, 16, 19, 20, 29, 30, 31, 34, 37, 40]
 
-packages2 = [2, 3, 12, 17, 18, 21, 22, 23, 24, 26, 27, 35, 36, 38, 39]
+packages2 = [2, 3, 6, 12, 17, 18, 21, 22, 23, 24, 26, 27, 35, 36, 38, 39]
 
-packages3 = [4, 5, 6, 7, 8, 9, 10, 11, 25, 28, 32, 33]
+packages3 = [4, 5, 7, 8, 9, 10, 11, 25, 28, 32, 33]
 
-truck1 = Truck.Truck()
-truck2 = Truck.Truck()
-truck3 = Truck.Truck()
+truck1 = Truck.Truck("Truck 1")
+truck2 = Truck.Truck("Truck 2")
+truck3 = Truck.Truck("Truck 3")
 
 # Load the trucks
 for i in packages1:
@@ -68,6 +68,7 @@ for i in packages3:
 
 
 def deliverPackages(truck):
+    truck.time = truck.startTime
     while len(truck.packagesNotDelivered) > 0:
         # Get the closest package
         closestPackage = truck.packagesNotDelivered[0]
@@ -77,7 +78,9 @@ def deliverPackages(truck):
         # Iterate through the packages to find the closest one
         for i in range(0, len(truck.packagesNotDelivered)):
             package = truck.packagesNotDelivered[i]
+            package.status = "En Route on " + truck.name
             addressIndex = getAddressIndex(package.address)
+            package.truck = truck
 
             # Get the distance between the current package and the truck's current location
             distance = calculateDistance(getAddressIndex(truck.currentLocation), addressIndex)
@@ -98,7 +101,7 @@ def deliverPackages(truck):
         truck.mileage += float(closestDistance)
 
         # Set the truck's time to the distance between the truck's current location and the closest package
-        truck.time += datetime.timedelta(hours=float(closestDistance) / 20)
+        truck.time += datetime.timedelta(hours=float(closestDistance) / 18)
 
         # Set the package's delivery time to the truck's time
         closestPackage.deliveryTime = truck.time
@@ -109,17 +112,17 @@ def deliverPackages(truck):
     # when out of packages, send the truck back to the hub
     truck.currentLocation = "4001 South 700 East"
     truck.mileage += float(calculateDistance(getAddressIndex(truck.currentPackage.address), getAddressIndex(truck.currentLocation)))
-    truck.time += datetime.timedelta(hours=float(calculateDistance(getAddressIndex(truck.currentPackage.address), getAddressIndex(truck.currentLocation))) / 20)
+    truck.time += datetime.timedelta(hours=float(calculateDistance(getAddressIndex(truck.currentPackage.address), getAddressIndex(truck.currentLocation))) / 18)
 
 
 # Deliver the packages
-truck1.time = datetime.timedelta(hours=8, minutes=30)
-truck2.time = datetime.timedelta(hours=8, minutes=30)
+truck1.startTime = datetime.timedelta(hours=8, minutes=00)
+truck2.startTime = datetime.timedelta(hours=9, minutes=15)
 
 deliverPackages(truck1)
 deliverPackages(truck2)
 
-truck3.time = min(truck1.time, truck2.time)
+truck3.startTime = min(truck1.time, truck2.time)
 deliverPackages(truck3)
 
 
@@ -137,7 +140,9 @@ class Main:
     # if the packaged has been delivered before the entered time, set the status to delivered
     for i in range(1, 41):
         package = h.lookup(str(i))
+        if time < package.truck.startTime:
+            package.status = "At the Hub"
         if package.deliveryTime <= time:
-            package.status = "Delivered at " + str(package.deliveryTime)
+            package.status = "Delivered at " + str(package.deliveryTime) + " by " + package.truck.name
 
         print(package)
