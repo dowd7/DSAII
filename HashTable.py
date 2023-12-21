@@ -38,6 +38,7 @@ class HashTable:
             return True
 
     # Get a package from the hash table
+    # O(n) time complexity
     def lookup(self, key):
         hash = self._get_hash(key)
         if self.list[hash] is not None:
@@ -47,18 +48,3 @@ class HashTable:
                 if keyValuePair[0] == key:
                     return keyValuePair[1]
         return None
-
-    # Remove a package from the hash table
-    def remove(self, key):
-        hash = self._get_hash(key)
-
-        # If the index is empty, return false
-        if self.list[hash] is None:
-            return False
-
-        # If the index is not empty, iterate through the list to find the package
-        for i in range(0, len(self.list[hash])):
-            if self.list[hash][i][0] == key:
-                self.list[hash].pop(i)
-                return True
-        return False
