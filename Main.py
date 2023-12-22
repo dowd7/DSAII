@@ -92,7 +92,7 @@ def deliverPackages(truck):
             package = truck.packagesNotDelivered[i]
 
             # Set the package's status to en route on the truck
-            package.status = "En Route on " + truck.name
+            package.status = "En Route on " + truck.name + " as of " + str(truck.startTime)
             addressIndex = getAddressIndex(package.address)
             package.truck = truck
 
@@ -143,6 +143,18 @@ truck3.startTime = min(truck1.time, truck2.time)
 deliverPackages(truck3)
 
 
+# Verify the package's address and status at a given time
+def verifyPackage(time, package):
+    # fix the address for package 9
+    if package.ID == "9" and time >= datetime.timedelta(hours=10, minutes=20):
+        package.address = "410 S State St"
+
+    if time < package.truck.startTime:
+        package.status = "At the Hub"
+    if package.deliveryTime <= time:
+        package.status = "Delivered at " + str(package.deliveryTime) + " by " + package.truck.name
+
+
 # User can enter a time in the format HH:MM to see the status of all packages at that time
 class Main:
     print("The total mileage for all trucks is: " + str(truck1.mileage + truck2.mileage + truck3.mileage) + " miles.")
@@ -153,16 +165,26 @@ class Main:
     hour = int(time[0])
     minute = int(time[1])
     time = datetime.timedelta(hours=hour, minutes=minute)
-    print("The status of all packages at " + str(time) + " is: ")
 
-    # if the entered time is before the package's start time, set the status to at the hub
-    # if the package has been delivered before the entered time, set the status to delivered
-    # O(n) time complexity
-    for i in range(1, 41):
-        package = h.lookup(str(i))
-        if time < package.truck.startTime:
-            package.status = "At the Hub"
-        if package.deliveryTime <= time:
-            package.status = "Delivered at " + str(package.deliveryTime) + " by " + package.truck.name
+    # ask if the user wants to see all packages or one specific package
+    allPackages = input("Would you like to see the status of all packages or 1 specific package? (All/1): ")
 
+    if allPackages == "1":
+        packageID = input("Enter the package ID: ")
+        package = h.lookup(packageID)
+        verifyPackage(time, package)
+        print("The status of package " + packageID + " at " + str(time) + " is: ")
         print(package)
+        exit()
+
+    if allPackages == "All":
+        print("The status of all packages at " + str(time) + " is: ")
+
+        # if the entered time is before the package's start time, set the status to at the hub
+        # if the package has been delivered before the entered time, set the status to delivered
+        # O(n) time complexity
+        for i in range(1, 41):
+            package = h.lookup(str(i))
+            verifyPackage(time, package)
+            print(package)
+        exit()
