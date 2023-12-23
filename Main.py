@@ -149,6 +149,8 @@ def verifyPackage(time, package):
     if package.ID == "9" and time >= datetime.timedelta(hours=10, minutes=20):
         package.address = "410 S State St"
 
+    # if the entered time is before the package's start time, set the status to at the hub
+    # if the package has been delivered before the entered time, set the status to delivered
     if time < package.truck.startTime:
         package.status = "At the Hub"
     if package.deliveryTime <= time:
@@ -177,11 +179,10 @@ class Main:
         print(package)
         exit()
 
-    if allPackages == "All":
+    if allPackages == "All" or allPackages == "all":
         print("The status of all packages at " + str(time) + " is: ")
 
-        # if the entered time is before the package's start time, set the status to at the hub
-        # if the package has been delivered before the entered time, set the status to delivered
+        # iterate through the hash table, verify and print the package
         # O(n) time complexity
         for i in range(1, 41):
             package = h.lookup(str(i))
