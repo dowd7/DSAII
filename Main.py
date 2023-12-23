@@ -75,6 +75,7 @@ for i in packages3:
 
 
 # Deliver the packages for a given truck, uses the nearest neighbor algorithm
+# O(n^2) time complexity
 def deliverPackages(truck):
     # Truck's current time is set to the truck's start time
     truck.time = truck.startTime
