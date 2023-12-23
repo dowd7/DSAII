@@ -148,6 +148,7 @@ def verifyPackage(time, package):
     # fix the address for package 9
     if package.ID == "9" and time >= datetime.timedelta(hours=10, minutes=20):
         package.address = "410 S State St"
+        package.zip = "84111"
 
     # if the entered time is before the package's start time, set the status to at the hub
     # if the package has been delivered before the entered time, set the status to delivered
